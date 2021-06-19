@@ -1,0 +1,16 @@
+{
+  "name": "lambda",
+  "version": "1.0.0",
+  "description": "A lambda to migrate schemas to the AWS database",
+  "main": "migrateCloud.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Justin Lawrence",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.18.0",
+    "knex": "^0.95.6",
+    "mysql": "^2.18.1"
+  }
+}
