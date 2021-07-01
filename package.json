@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "mysql:migrate": "knex migrate:latest --knexfile ./db/knexfile.js --env production",
-    "mysql:create": "docker run -p 3306:3306 --name dreamjob-db-mysql -e MYSQL_ROOT_PASSWORD=password -e \"MYSQL_DATABASE=dreamjob_db\" -d mysql:5.7 --sql-mode=\"NO_ENGINE_SUBSTITUTION\"",
+    "mysql:create": "docker run -h 127.0.0.1 -p 3306:3306 --name dreamjob-db-mysql -e MYSQL_ROOT_PASSWORD=password -e \"MYSQL_DATABASE=dreamjob_db\" -d mysql:5.7 --sql-mode=\"NO_ENGINE_SUBSTITUTION\"",
     "mysql:destroy": "docker stop dreamjob-db-mysql && docker rm dreamjob-db-mysql",
     "mysql:reset": "npm run mysql:destroy && npm run mysql:create",
     "migrate:make": "knex migrate:make"
@@ -14,6 +14,7 @@
   "author": "Justin Lawrence",
   "license": "ISC",
   "dependencies": {
+    "@aws-amplify/ui-vue": "^1.0.13",
     "knex": "^0.95.6",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",

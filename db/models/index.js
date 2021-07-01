@@ -7,6 +7,7 @@ const { BaseModel } = require('./BaseModel')
 const { UserModel } = require('./User')
 const { JobModel } = require('./Job')
 const { SkillModel } = require('./Skill')
+const { TimelineModel } = require('./Timeline')
 
 module.exports = () => {
   const knex = Knex({
@@ -25,6 +26,7 @@ module.exports = () => {
     BaseModel,
     UserModel,
     JobModel,
-    SkillModel
+    SkillModel,
+    TimelineModel
   }
 }

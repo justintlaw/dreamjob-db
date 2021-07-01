@@ -11,7 +11,7 @@ class UserModel extends BaseModel {
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['email'],
+      required: ['email', 'name'],
 
       properties: {
         id: {
@@ -19,8 +19,7 @@ class UserModel extends BaseModel {
           format: 'uuid'
         },
         email: { type: 'email' },
-        first_name: { type: 'string' },
-        last_name: { type: 'string' },
+        name: { type: 'string' }
       }
     }
   }

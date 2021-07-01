@@ -2,6 +2,7 @@
 
 const Knex = require('knex')
 const { Model } = require('objection')
+const { TimelineModel } = require('./db/models/Timeline')
 const { JobModel } = require('./db/models/Job')
 const { SkillModel } = require('./db/models/Skill')
 const { UserModel } = require('./db/models/User')
@@ -18,32 +19,6 @@ const knex = Knex({
 
 Model.knex(knex)
 
-// async function createSchema() {
-//   if (await knex.schema.hasTable('job')) {
-//     return
-//   }
-
-//   await knex.schema.createTable('job', table => {
-//     table.uuid('id').primary()
-//     table.string('title')
-//     table.string('location')
-//     table.string('description')
-//     table.decimal('salary')
-//     table.string('company')
-//     table.string('type')
-//     table.boolean('is_intern')
-//     table.time('post_date')
-//     table.timestamp('created_at').defaultTo(knex.fn.now())
-//     table.timestamp('updated_at').defaultTo(knex.fn.now())
-//   })
-
-//   await knex.schema.createTable('skill', table => {
-//     table.uuid('id').primary()
-//     table.string('name')
-//   })
-//     .then(() => knex.raw(onInsertTrigger('skill')))
-// }
-
 // createSchema()
 //   .then(() => main())
 //   .then(() => knex.destroy())
@@ -53,8 +28,6 @@ Model.knex(knex)
 //   })
 
 async function main() {
-  // await Job.query().delete()
-
   await JobModel.query().insert({
     title: 'Fullstack Developer',
     location: 'Lehi, UT',
@@ -107,25 +80,40 @@ async function main() {
     .$relatedQuery('skills')
     .relate(skill.id)
 
-  await UserModel.query().insert({
-    email: 'test@mail.com',
-    first_name: 'Bob',
-    last_name: 'Dole'
-  })
+  // await UserModel.query().insert({
+  //   email: 'test@mail.com',
+  //   first_name: 'Bob',
+  //   last_name: 'Dole'
+  // })
 
-  const user = await UserModel
-    .query()
-    .findOne({
-      email: 'test@mail.com',
-    })
+  // const user = await UserModel
+  //   .query()
+  //   .findOne({
+  //     email: 'test@mail.com',
+  //   })
 
-  await user
-    .$relatedQuery('skills')
-    .relate(skill.id)
+  // await user
+  //   .$relatedQuery('skills')
+  //   .relate(skill.id)
 
-  await user
-    .$relatedQuery('jobs')
-    .relate(job.id)
+  // await user
+  //   .$relatedQuery('jobs')
+  //   .relate(job.id)
+
+  // await TimelineModel.query().insert({
+  //   name: 'My Career Plan',
+  //   current_preset: true
+  // })
+
+  // const timeline = await TimelineModel
+  //   .query()
+  //   .findOne({
+  //     name: 'My Career Plan'
+  //   })
+
+  // await timeline
+  //   .$relatedQuery('user')
+  //   .relate(user.id)
 }
 
 main()

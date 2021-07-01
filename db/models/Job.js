@@ -11,7 +11,7 @@ class JobModel extends BaseModel {
   static get jsonSchema() {
     return {
       type: 'object',
-      required: ['title', 'type'],
+      required: ['title', 'type', 'userId'],
 
       properties: {
         id: {
@@ -30,7 +30,11 @@ class JobModel extends BaseModel {
         is_intern: { type: 'boolean' },
         post_date: { type: 'date' },
         created_at: { type: 'timestamp' },
-        updated_at: { type: 'timestamp' }
+        updated_at: { type: 'timestamp' },
+        userId: {
+          type: 'string',
+          format: 'uuid'
+        }
       }
     }
   }
