@@ -42,9 +42,12 @@ exports.up = function(knex) {
         .onUpdate('CASCADE')
         .onDelete('CASCADE')
       table.uuid('timelineId').references('timeline.id').notNullable()
-      table.date('startDate').unique().notNullable()
-      table.date('endDate').unique().notNullable()
-      table.unique(['jobId', 'timelineId'])
+      table.date('startDate').notNullable()
+      table.date('endDate').notNullable()
+      // a job should only appear once in a timeline
+      table.unique(['jobId', 'timelineId']),
+      // each job in a timeline should have a unique start date
+      table.unique(['timelineId', 'startDate'])
     })
 
     .createTable('job_skill', table => {

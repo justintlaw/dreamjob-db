@@ -2,8 +2,10 @@
 
 const Models = require('./db/models')
 
-const database = Models()
+// const database = Models()
 
-module.exports = {
-  database
+module.exports = (config) => {
+  return {
+    database: Models(config)
+  }
 }

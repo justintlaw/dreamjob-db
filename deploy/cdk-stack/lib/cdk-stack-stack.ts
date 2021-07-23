@@ -2,11 +2,12 @@ import * as path from 'path';
 import * as cdk from '@aws-cdk/core';
 import * as rds from '@aws-cdk/aws-rds';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import * as cr from '@aws-cdk/custom-resources';
+// import * as cr from '@aws-cdk/custom-resources';
 import * as lambda from '@aws-cdk/aws-lambda';
-import * as iam from '@aws-cdk/aws-iam';
-import * as ssm from '@aws-cdk/aws-ssm'
-import { AwsCustomResource, AwsCustomResourcePolicy } from '@aws-cdk/custom-resources';
+// import * as iam from '@aws-cdk/aws-iam';
+// import * as ssm from '@aws-cdk/aws-ssm';
+// import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
+// import { AwsCustomResource, AwsCustomResourcePolicy } from '@aws-cdk/custom-resources';
 import { Duration } from '@aws-cdk/aws-ec2/node_modules/@aws-cdk/core';
 
 /**
@@ -19,9 +20,8 @@ export class CdkStackStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
-
     // declare a new vpc to be used
+    // should probably specify config so we don't use NAT gateways
     const vpc = new ec2.Vpc(this, 'VPC');
 
     const database = 'dreamjobDB'
@@ -33,6 +33,8 @@ export class CdkStackStack extends cdk.Stack {
       engine: rds.DatabaseInstanceEngine.mysql({ version: rds.MysqlEngineVersion.VER_5_7_33 }),
       // set the datbase size
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.MICRO),
+      // set port
+      port: 3306,
       // set storage
       allocatedStorage: 20, // set to minimum
       // set credentials
@@ -40,13 +42,16 @@ export class CdkStackStack extends cdk.Stack {
       // credentials: creds,
       vpc: vpc,
       vpcSubnets: {
-        subnetType: ec2.SubnetType.PUBLIC // set the vpc type
+        subnetType: ec2.SubnetType.PRIVATE // set the vpc type
       }
     });
 
     const migrateDatabase = new lambda.Function(this, 'MigrateHandler', {
       runtime: lambda.Runtime.NODEJS_14_X,
       vpc: instance.vpc,
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE
+      },
       code: lambda.Code.fromAsset(path.join(__dirname, '../../../db')), // make this path in a more bullet proof way
       handler: 'lambda/migrateCloud.handler',
       environment: {
@@ -63,6 +68,13 @@ export class CdkStackStack extends cdk.Stack {
 
     // set the lambda to allow connections to the database
     migrateDatabase.connections.allowTo(instance, ec2.Port.tcp(3306));
+
+    // output the arn of the db secrets
+    new cdk.CfnOutput(this, 'DbSecretsRef', {
+      value: instance.secret?.secretArn || '',
+      description: 'The arn of the database secrets',
+      exportName: 'DbSecretsArn'
+    })
 
     // // Custom resource?
     // new AwsCustomResource(this, 'MigrateDB', {

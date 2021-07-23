@@ -9,16 +9,28 @@ const { JobModel } = require('./Job')
 const { SkillModel } = require('./Skill')
 const { TimelineModel } = require('./Timeline')
 
-module.exports = () => {
+module.exports = (config) => {
   const knex = Knex({
-    client: 'mysql',
+    client: config.client,
     connection: {
-      host: '127.0.0.1',
-      user: 'root',
-      password: 'password',
-      database: 'dreamjob_db'
+      host: config.host,
+      user: config.user,
+      password: config.password,
+      database: config.database
     }
   })
+
+// module.exports = () => {
+//   const knex = Knex({
+//     client: 'mysql',
+//     connection: {
+//       host: '127.0.0.1',
+//       user: 'root',
+//       password: 'password',
+//       database: 'dreamjob_db'
+//     }
+//   })
+  
 
   Model.knex(knex)
 
