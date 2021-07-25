@@ -5,7 +5,7 @@ import * as ec2 from '@aws-cdk/aws-ec2';
 // import * as cr from '@aws-cdk/custom-resources';
 import * as lambda from '@aws-cdk/aws-lambda';
 // import * as iam from '@aws-cdk/aws-iam';
-// import * as ssm from '@aws-cdk/aws-ssm';
+import * as ssm from '@aws-cdk/aws-ssm';
 // import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 // import { AwsCustomResource, AwsCustomResourcePolicy } from '@aws-cdk/custom-resources';
 import { Duration } from '@aws-cdk/aws-ec2/node_modules/@aws-cdk/core';
@@ -23,6 +23,13 @@ export class CdkStackStack extends cdk.Stack {
     // declare a new vpc to be used
     // should probably specify config so we don't use NAT gateways
     const vpc = new ec2.Vpc(this, 'VPC');
+
+    // vpc.addInterfaceEndpoint('SecretsManagerEndpoint', {
+    //   service: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER
+    // })
+    // vpc.addInterfaceEndpoint('LambdaEndpoint', {
+    //   service: ec2.InterfaceVpcEndpointAwsService.LAMBDA
+    // })
 
     const database = 'dreamjobDB'
 
@@ -64,7 +71,11 @@ export class CdkStackStack extends cdk.Stack {
     instance.secret?.grantRead(migrateDatabase);
 
     // set the database to accept connections from the lambda
-    instance.connections.allowFrom(migrateDatabase, ec2.Port.tcp(3306));
+    // instance.connections.allowFrom(migrateDatabase, ec2.Port.tcp(3306));
+
+    // for now, allow from anywhere on the private subnet
+    // TODO: update so that connections are only allowed from lambda and the ecs task
+    instance.connections.allowFromAnyIpv4(ec2.Port.tcp(3306))
 
     // set the lambda to allow connections to the database
     migrateDatabase.connections.allowTo(instance, ec2.Port.tcp(3306));
@@ -75,6 +86,21 @@ export class CdkStackStack extends cdk.Stack {
       description: 'The arn of the database secrets',
       exportName: 'DbSecretsArn'
     })
+
+    // output the arn of the vpc
+    // new cdk.CfnOutput(this, 'VpcIdRef', {
+    //   value: vpc.vpcId,
+    //   description: 'The id of the vpc',
+    //   exportName: 'VpcId'
+    // })
+    new ssm.StringParameter(this, 'Parameter', {
+      allowedPattern: '.*',
+      description: 'The id of the vpc',
+      parameterName: '/Dreamjob/VpcId',
+      stringValue: vpc.vpcId,
+      tier: ssm.ParameterTier.STANDARD
+    });
+    // ssm.StringParameter.valueFromLookup(vpc, '/Dreamjob/VpcId')
 
     // // Custom resource?
     // new AwsCustomResource(this, 'MigrateDB', {

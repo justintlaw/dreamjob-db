@@ -54,6 +54,14 @@ class JobModel extends BaseModel {
           },
           to: 'skill.id'
         }
+      },
+      user: {
+        relation: BaseModel.BelongsToOneRelation,
+        modelClass: path.join(__dirname, 'User'),
+        join: {
+          from: 'job.userId',
+          to: 'user.id'
+        }
       }
     }
   }
