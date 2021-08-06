@@ -40,8 +40,6 @@ class JobModel extends BaseModel {
   }
 
   static get relationMappings() {
-    const Skill = require('./Skill')
-
     return {
       skills: {
         relation: BaseModel.ManyToManyRelation,

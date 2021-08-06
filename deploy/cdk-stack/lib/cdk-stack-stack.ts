@@ -24,9 +24,9 @@ export class CdkStackStack extends cdk.Stack {
     // should probably specify config so we don't use NAT gateways
     const vpc = new ec2.Vpc(this, 'VPC');
 
-    // vpc.addInterfaceEndpoint('SecretsManagerEndpoint', {
-    //   service: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER
-    // })
+    vpc.addInterfaceEndpoint('SecretsManagerEndpoint', {
+      service: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER
+    })
     // vpc.addInterfaceEndpoint('LambdaEndpoint', {
     //   service: ec2.InterfaceVpcEndpointAwsService.LAMBDA
     // })
