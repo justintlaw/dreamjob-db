@@ -9,7 +9,7 @@
     "mysql:create": "docker run -h 127.0.0.1 -p 3306:3306 --name dreamjob-db-mysql -e MYSQL_ROOT_PASSWORD=password -e \"MYSQL_DATABASE=dreamjob_db\" -d mysql:5.7 --sql-mode=\"NO_ENGINE_SUBSTITUTION\"",
     "mysql:destroy": "docker stop dreamjob-db-mysql && docker rm dreamjob-db-mysql",
     "mysql:reset": "npm run mysql:destroy && npm run mysql:create",
-    "migrate:make": "knex migrate:make"
+    "migrate:make": "cd db && knex migrate:make"
   },
   "author": "Justin Lawrence",
   "license": "ISC",
